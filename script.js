@@ -4,7 +4,10 @@ const allEpisodes = getAllEpisodes();
 window.onload = function () {
   displayEpisodes(allEpisodes);
   setupSearch();
+  setupSelector();
 };
+
+/* ================= DISPLAY ================= */
 
 function displayEpisodes(episodeList) {
   const root = document.getElementById("root");
@@ -31,19 +34,60 @@ function displayEpisodes(episodeList) {
     `Displaying ${episodeList.length}/${allEpisodes.length} episodes`;
 }
 
+/* ================= SEARCH ================= */
+
 function setupSearch() {
   const searchInput = document.getElementById("search-input");
 
   searchInput.addEventListener("input", function () {
     const value = searchInput.value.toLowerCase();
 
-    const filtered = allEpisodes.filter(ep => {
-      return (
-        ep.name.toLowerCase().includes(value) ||
-        ep.summary.toLowerCase().includes(value)
-      );
-    });
+    const filtered = allEpisodes.filter(ep =>
+      ep.name.toLowerCase().includes(value) ||
+      ep.summary.toLowerCase().includes(value)
+    );
 
     displayEpisodes(filtered);
+
+    // Reset dropdown if searching
+    document.getElementById("episode-select").value = "";
+  });
+}
+
+/* ================= SELECTOR ================= */
+
+function setupSelector() {
+  const select = document.getElementById("episode-select");
+
+  // Populate dropdown
+  allEpisodes.forEach(ep => {
+    const option = document.createElement("option");
+
+    const season = ep.season.toString().padStart(2, "0");
+    const number = ep.number.toString().padStart(2, "0");
+
+    option.value = ep.id;
+    option.textContent = `S${season}E${number} - ${ep.name}`;
+
+    select.appendChild(option);
+  });
+
+  // When user selects episode
+  select.addEventListener("change", function () {
+    const selectedId = this.value;
+
+    if (!selectedId) {
+      displayEpisodes(allEpisodes);
+      return;
+    }
+
+    const selectedEpisode = allEpisodes.filter(
+      ep => ep.id == selectedId
+    );
+
+    displayEpisodes(selectedEpisode);
+
+    // Clear search when dropdown is used
+    document.getElementById("search-input").value = "";
   });
 }

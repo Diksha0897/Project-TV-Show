@@ -92,3 +92,33 @@ footer a {
 .template {
   display: none;
 }
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+#episode-select,
+#search-input {
+  padding: 10px;
+  font-size: 14px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+
+}
+
+#episode-select {
+  min-width: 230px;
+  cursor: pointer;
+  
+}
+
+#search-input {
+  width: 260px;
+}
+
+#numberOfEpisodes {
+  font-size: 14px;
+  color: #a3a3a3;
+}
