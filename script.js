@@ -1,42 +1,93 @@
 //You can edit ALL of the code here
-function setup() {
-  const allEpisodes = getAllEpisodes();
-  makePageForEpisodes(allEpisodes);
+const allEpisodes = getAllEpisodes();
+
+window.onload = function () {
+  displayEpisodes(allEpisodes);
+  setupSearch();
+  setupSelector();
+};
+
+/* ================= DISPLAY ================= */
+
+function displayEpisodes(episodeList) {
+  const root = document.getElementById("root");
+  root.innerHTML = "";
+
+  episodeList.forEach(episode => {
+    const template = document.querySelector(".template");
+    const clone = template.cloneNode(true);
+    clone.classList.remove("template");
+
+    const season = episode.season.toString().padStart(2, "0");
+    const number = episode.number.toString().padStart(2, "0");
+
+    clone.querySelector(".episodename").textContent =
+      `${episode.name} - S${season}E${number}`;
+
+    clone.querySelector(".png").src = episode.image.medium;
+    clone.querySelector(".summary").innerHTML = episode.summary;
+
+    root.appendChild(clone);
+  });
+
+  document.getElementById("numberOfEpisodes").textContent =
+    `Displaying ${episodeList.length}/${allEpisodes.length} episodes`;
 }
 
-function makePageForEpisodes(episodeList) {
-  const rootElem = document.getElementById("numberOfEpisodes");
-  rootElem.textContent = `Got ${episodeList.length} episode(s)`;
-}
-console.log(getOneEpisode());
+/* ================= SEARCH ================= */
 
-let array = getAllEpisodes();
+function setupSearch() {
+  const searchInput = document.getElementById("search-input");
 
-for (let i = 0; i < array.length - 1; i++) {
-  let item = document.querySelector(".container");
-  //let linkTag = document.querySelector(".link");
-  let clone = item.cloneNode(true);
-  //let clone2 = linkTag.cloneNode(true);
-  document.getElementById("root").appendChild(clone);
-  //document.getElementById("root").appendChild(clone2);
-}
+  searchInput.addEventListener("input", function () {
+    const value = searchInput.value.toLowerCase();
 
-for (let i = 0; i < array.length; i++) {
-  let episodeName = array[i].name;
-  let seasonNumber = array[i].season.toString().padStart(2, 0);
+    const filtered = allEpisodes.filter(ep =>
+      ep.name.toLowerCase().includes(value) ||
+      ep.summary.toLowerCase().includes(value)
+    );
 
-  let episodeNumber = array[i].number.toString().padStart(2, 0);
+    displayEpisodes(filtered);
 
-  let imageEpisode = array[i].image.medium;
-
-  let linkEpisode = array[i]._links.self.href;
-  let episodeSummary = array[i].summary;
-
-  document.getElementsByClassName("episodename")[i].textContent =
-    `${episodeName} - S${seasonNumber}E${episodeNumber}`;
-  document.getElementsByClassName("summary")[i].innerHTML = `${episodeSummary}`;
-  document.getElementsByClassName("png")[i].src = `${imageEpisode}`;
-  document.getElementsByClassName("link")[i].href = `${linkEpisode}`;
+    // Reset dropdown if searching
+    document.getElementById("episode-select").value = "";
+  });
 }
 
-window.onload = setup;
+/* ================= SELECTOR ================= */
+
+function setupSelector() {
+  const select = document.getElementById("episode-select");
+
+  // Populate dropdown
+  allEpisodes.forEach(ep => {
+    const option = document.createElement("option");
+
+    const season = ep.season.toString().padStart(2, "0");
+    const number = ep.number.toString().padStart(2, "0");
+
+    option.value = ep.id;
+    option.textContent = `S${season}E${number} - ${ep.name}`;
+
+    select.appendChild(option);
+  });
+
+  // When user selects episode
+  select.addEventListener("change", function () {
+    const selectedId = this.value;
+
+    if (!selectedId) {
+      displayEpisodes(allEpisodes);
+      return;
+    }
+
+    const selectedEpisode = allEpisodes.filter(
+      ep => ep.id == selectedId
+    );
+
+    displayEpisodes(selectedEpisode);
+
+    // Clear search when dropdown is used
+    document.getElementById("search-input").value = "";
+  });
+}
