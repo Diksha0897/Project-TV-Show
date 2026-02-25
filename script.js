@@ -1,19 +1,36 @@
 //You can edit ALL of the code here
-const allEpisodes = getAllEpisodes();
 
-window.onload = function () {
-  displayEpisodes(allEpisodes);
-  setupSearch();
-  setupSelector();
+async function fetchEpisodes() {
+  let response;
+  try {
+    document.getElementById("root").textContent = "Loading episodes...";
+    response = await fetch("https://api.tvmaze.com/shows/82/episodes");
+    if (!response.ok) {
+      throw new Error("Failed to load data");
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    document.getElementById("root").textContent = "Failed to load Data";
+  }
+}
+
+window.onload = async function () {
+  const allEpisodes = await fetchEpisodes();
+  console.log("Episodes:", allEpisodes);
+  const length = allEpisodes.length;
+  displayEpisodes(allEpisodes, length);
+  setupSearch(allEpisodes);
+  setupSelector(allEpisodes);
 };
 
 /* ================= DISPLAY ================= */
 
-function displayEpisodes(episodeList) {
+function displayEpisodes(episodeList, length) {
   const root = document.getElementById("root");
   root.innerHTML = "";
 
-  episodeList.forEach(episode => {
+  episodeList.forEach((episode) => {
     const template = document.querySelector(".template");
     const clone = template.cloneNode(true);
     clone.classList.remove("template");
@@ -31,23 +48,24 @@ function displayEpisodes(episodeList) {
   });
 
   document.getElementById("numberOfEpisodes").textContent =
-    `Displaying ${episodeList.length}/${allEpisodes.length} episodes`;
+    `Displaying ${episodeList.length}/${length} episodes`;
 }
 
 /* ================= SEARCH ================= */
 
-function setupSearch() {
+function setupSearch(allEpisodes) {
   const searchInput = document.getElementById("search-input");
 
   searchInput.addEventListener("input", function () {
     const value = searchInput.value.toLowerCase();
 
-    const filtered = allEpisodes.filter(ep =>
-      ep.name.toLowerCase().includes(value) ||
-      ep.summary.toLowerCase().includes(value)
+    const filtered = allEpisodes.filter(
+      (ep) =>
+        ep.name.toLowerCase().includes(value) ||
+        ep.summary.toLowerCase().includes(value),
     );
 
-    displayEpisodes(filtered);
+    displayEpisodes(filtered, allEpisodes.length);
 
     // Reset dropdown if searching
     document.getElementById("episode-select").value = "";
@@ -56,11 +74,11 @@ function setupSearch() {
 
 /* ================= SELECTOR ================= */
 
-function setupSelector() {
+function setupSelector(allEpisodes) {
   const select = document.getElementById("episode-select");
 
   // Populate dropdown
-  allEpisodes.forEach(ep => {
+  allEpisodes.forEach((ep) => {
     const option = document.createElement("option");
 
     const season = ep.season.toString().padStart(2, "0");
@@ -77,15 +95,13 @@ function setupSelector() {
     const selectedId = this.value;
 
     if (!selectedId) {
-      displayEpisodes(allEpisodes);
+      displayEpisodes(allEpisodes, allEpisodes.length);
       return;
     }
 
-    const selectedEpisode = allEpisodes.filter(
-      ep => ep.id == selectedId
-    );
+    const selectedEpisode = allEpisodes.filter((ep) => ep.id == selectedId);
 
-    displayEpisodes(selectedEpisode);
+    displayEpisodes(selectedEpisode, allEpisodes.length);
 
     // Clear search when dropdown is used
     document.getElementById("search-input").value = "";
