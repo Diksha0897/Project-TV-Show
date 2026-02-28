@@ -98,13 +98,17 @@ function displayEpisodes(episodeList, totalLength) {
 function setupSearch(allEpisodes) {
   const searchInput = document.getElementById("search-input");
 
-  searchInput.addEventListener("input", function () {
-    const value = searchInput.value.toLowerCase();
+  // Remove old listener by cloning
+  const newInput = oldInput.cloneNode(true);
+  oldInput.parentNode.replaceChild(newInput, oldInput);
+
+  newInput.addEventListener("input", function () {
+    const value = this.value.toLowerCase();
 
     const filtered = allEpisodes.filter(
       (ep) =>
         ep.name.toLowerCase().includes(value) ||
-        ep.summary.toLowerCase().includes(value),
+        (ep.summary && ep.summary.toLowerCase().includes(value))
     );
 
     displayEpisodes(filtered, allEpisodes.length);
