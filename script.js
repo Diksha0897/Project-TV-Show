@@ -63,7 +63,7 @@ window.onload = async function () {
 
 /* ================= DISPLAY ================= */
 
-function displayEpisodes(episodeList, length) {
+function displayEpisodes(episodeList, totalLength) {
   const root = document.getElementById("root");
   root.innerHTML = "";
 
@@ -78,14 +78,19 @@ function displayEpisodes(episodeList, length) {
     clone.querySelector(".episodename").textContent =
       `${episode.name} - S${season}E${number}`;
 
-    clone.querySelector(".png").src = episode.image.medium;
-    clone.querySelector(".summary").innerHTML = episode.summary;
+    if (episode.image) {
+      clone.querySelector(".png").src = episode.image.medium;
+    }
+
+   clone.querySelector(".summary").innerHTML =
+      episode.summary || "No summary available.";
+
 
     root.appendChild(clone);
   });
 
   document.getElementById("numberOfEpisodes").textContent =
-    `Displaying ${episodeList.length}/${length} episodes`;
+    `Displaying ${episodeList.length}/${totalLength} episodes`;
 }
 
 /* ================= SEARCH ================= */
