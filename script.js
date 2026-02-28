@@ -1,9 +1,10 @@
 //You can edit ALL of the code here
-
+//cache
 let showsCache = null;
 let episodesCache = {};
 
-//fetch show
+//fetch shows
+
 async function fetchShows() {
   if (showsCache) return showsCache;
 
@@ -15,9 +16,9 @@ async function fetchShows() {
 
   const data = await response.json();
 
-  // Sort alphabetically (case insensitive)
+// Sort alphabetically (case insensitive)
   data.sort((a, b) =>
-    a.name.toLowerCase().localeCompare(b.name.toLowerCase()),
+    a.name.toLowerCase().localeCompare(b.name.toLowerCase())
   );
 
   showsCache = data;
@@ -25,6 +26,7 @@ async function fetchShows() {
 }
 
 //fetch episodes
+
 async function fetchEpisodes(showId) {
   if (episodesCache[showId]) {
     return episodesCache[showId];
@@ -47,9 +49,12 @@ async function fetchEpisodes(showId) {
   return data;
 }
 
+//load selection
+
 window.onload = async function () {
   const showSelect = document.getElementById("Show-selector");
-}
+
+  try {
     const shows = await fetchShows();
 
     showSelect.innerHTML = '<option value="">Select Show</option>';
@@ -61,7 +66,24 @@ window.onload = async function () {
       showSelect.appendChild(option);
     });
 
-/* ================= DISPLAY ================= */
+    showSelect.addEventListener("change", async function () {
+      const showId = this.value;
+      if (!showId) return;
+
+      const episodes = await fetchEpisodes(showId);
+
+      displayEpisodes(episodes, episodes.length);
+      setupSearch(episodes);
+      setupSelector(episodes);
+
+      document.getElementById("search-input").value = "";
+    });
+  } catch (error) {
+    document.getElementById("root").textContent = "Failed to load shows";
+  }
+};
+
+// ================= DISPLAY =================
 
 function displayEpisodes(episodeList, totalLength) {
   const root = document.getElementById("root");
@@ -82,7 +104,7 @@ function displayEpisodes(episodeList, totalLength) {
       clone.querySelector(".png").src = episode.image.medium;
     }
 
-   clone.querySelector(".summary").innerHTML =
+    clone.querySelector(".summary").innerHTML =
       episode.summary || "No summary available.";
 
 
@@ -93,12 +115,12 @@ function displayEpisodes(episodeList, totalLength) {
     `Displaying ${episodeList.length}/${totalLength} episodes`;
 }
 
-/* ================= SEARCH ================= */
+// ================= SEARCH =================
 
 function setupSearch(allEpisodes) {
-  const searchInput = document.getElementById("search-input");
+  const oldInput = document.getElementById("search-input");
 
-  // Remove old listener by cloning
+// Remove old listener by cloning
   const newInput = oldInput.cloneNode(true);
   oldInput.parentNode.replaceChild(newInput, oldInput);
 
@@ -113,27 +135,27 @@ function setupSearch(allEpisodes) {
 
     displayEpisodes(filtered, allEpisodes.length);
 
-    // Reset dropdown if searching
+// Reset dropdown if searching
     document.getElementById("episode-select").value = "";
   });
 }
 
-/* ================= SELECTOR ================= */
+// ================= EPISODE SELECTOR =================
 
 function setupSelector(allEpisodes) {
-  const select = document.getElementById("episode-select");
+  const oldSelect = document.getElementById("episode-select");
 
-  // Remove old listener by cloning
+// Remove old listener by cloning
   const newSelect = oldSelect.cloneNode(false);
   oldSelect.parentNode.replaceChild(newSelect, oldSelect);
 
-  // Default option
+// Default option
   const defaultOption = document.createElement("option");
   defaultOption.value = "";
   defaultOption.textContent = "All Episodes";
   newSelect.appendChild(defaultOption);
 
-  // Populate episodes
+// Populate episodes
   allEpisodes.forEach((ep) => {
     const option = document.createElement("option");
 
@@ -146,7 +168,7 @@ function setupSelector(allEpisodes) {
     newSelect.appendChild(option);
   });
 
-  // When user selects episode
+// When user selects episode
   newSelect.addEventListener("change", function () {
     const selectedId = this.value;
 
@@ -161,7 +183,7 @@ function setupSelector(allEpisodes) {
 
     displayEpisodes(selectedEpisode, allEpisodes.length);
 
-   //users search for episodes 
+// Clear search when dropdown is used
     document.getElementById("search-input").value = "";
   });
 }
