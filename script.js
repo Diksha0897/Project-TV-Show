@@ -3,6 +3,7 @@
 let showsCache = null;
 let episodesCache = {};
 
+//fetch show
 async function fetchShows() {
   if (showsCache) return showsCache;
 
@@ -23,14 +24,42 @@ async function fetchShows() {
   return data;
 }
 
+//fetch episodes
+async function fetchEpisodes(showId) {
+  if (episodesCache[showId]) {
+    return episodesCache[showId];
+  }
+
+  document.getElementById("root").textContent = "Loading episodes...";
+
+  const response = await fetch(
+    `https://api.tvmaze.com/shows/${showId}/episodes`
+  );
+
+  if (!response.ok) {
+    document.getElementById("root").textContent = "Failed to load data";
+    return [];
+  }
+
+  const data = await response.json();
+
+  episodesCache[showId] = data; // cache episodes
+  return data;
+}
+
 window.onload = async function () {
-  const allEpisodes = await fetchEpisodes();
-  console.log("Episodes:", allEpisodes);
-  const length = allEpisodes.length;
-  displayEpisodes(allEpisodes, length);
-  setupSearch(allEpisodes);
-  setupSelector(allEpisodes);
-};
+  const showSelect = document.getElementById("Show-selector");
+}
+    const shows = await fetchShows();
+
+    showSelect.innerHTML = '<option value="">Select Show</option>';
+
+    shows.forEach((show) => {
+      const option = document.createElement("option");
+      option.value = show.id;
+      option.textContent = show.name;
+      showSelect.appendChild(option);
+    });
 
 /* ================= DISPLAY ================= */
 
