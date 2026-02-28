@@ -1,18 +1,26 @@
 //You can edit ALL of the code here
 
-async function fetchEpisodes() {
-  let response;
-  try {
-    document.getElementById("root").textContent = "Loading episodes...";
-    response = await fetch("https://api.tvmaze.com/shows/82/episodes");
-    if (!response.ok) {
-      throw new Error("Failed to load data");
-    }
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    document.getElementById("root").textContent = "Failed to load Data";
+let showsCache = null;
+let episodesCache = {};
+
+async function fetchShows() {
+  if (showsCache) return showsCache;
+
+  const response = await fetch("https://api.tvmaze.com/shows");
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch shows");
   }
+
+  const data = await response.json();
+
+  // Sort alphabetically (case insensitive)
+  data.sort((a, b) =>
+    a.name.toLowerCase().localeCompare(b.name.toLowerCase()),
+  );
+
+  showsCache = data;
+  return data;
 }
 
 window.onload = async function () {
