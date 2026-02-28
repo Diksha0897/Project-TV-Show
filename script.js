@@ -123,7 +123,17 @@ function setupSearch(allEpisodes) {
 function setupSelector(allEpisodes) {
   const select = document.getElementById("episode-select");
 
-  // Populate dropdown
+  // Remove old listener by cloning
+  const newSelect = oldSelect.cloneNode(false);
+  oldSelect.parentNode.replaceChild(newSelect, oldSelect);
+
+  // Default option
+  const defaultOption = document.createElement("option");
+  defaultOption.value = "";
+  defaultOption.textContent = "All Episodes";
+  newSelect.appendChild(defaultOption);
+
+  // Populate episodes
   allEpisodes.forEach((ep) => {
     const option = document.createElement("option");
 
@@ -133,11 +143,11 @@ function setupSelector(allEpisodes) {
     option.value = ep.id;
     option.textContent = `S${season}E${number} - ${ep.name}`;
 
-    select.appendChild(option);
+    newSelect.appendChild(option);
   });
 
   // When user selects episode
-  select.addEventListener("change", function () {
+  newSelect.addEventListener("change", function () {
     const selectedId = this.value;
 
     if (!selectedId) {
@@ -145,11 +155,13 @@ function setupSelector(allEpisodes) {
       return;
     }
 
-    const selectedEpisode = allEpisodes.filter((ep) => ep.id == selectedId);
+    const selectedEpisode = allEpisodes.filter(
+      (ep) => ep.id == selectedId
+    );
 
     displayEpisodes(selectedEpisode, allEpisodes.length);
 
-    // Clear search when dropdown is used
+   //users search for episodes 
     document.getElementById("search-input").value = "";
   });
 }
