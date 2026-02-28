@@ -66,6 +66,16 @@ window.onload = async function () {
       showSelect.appendChild(option);
     });
 
+     //Display first show's episodes by default
+    if (shows.length > 0) {
+      const firstShowId = shows[0].id;
+      showSelect.value = firstShowId; // select first show
+      const episodes = await fetchEpisodes(firstShowId);
+      displayEpisodes(episodes, episodes.length);
+      setupSearch(episodes);
+      setupSelector(episodes);
+    }
+
     showSelect.addEventListener("change", async function () {
       const showId = this.value;
       if (!showId) return;
