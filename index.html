@@ -9,44 +9,37 @@
   </head>
 
   <body>
-   <div class="controls">
-  <select id="episode-select">
-    <option value="">Select</option>
-  </select>
+    <div class="controls">
+      <select id="episode-select">
+        <option value="">Select</option>
+      </select>
 
-  <input
-    type="text"
-    id="search-input"
-    placeholder="Search episodes..."
-  />
+      <input type="text" id="search-input" placeholder="Search episodes..." />
 
-  <span id="numberOfEpisodes"></span>
-</div>
-
-
-
-
-  <main>
-    <div id="root"></div>
-  </main>
-
-  <div class="container template">
-    <div class="title-box">
-      <h3 class="episodename"></h3>
+      <span id="numberOfEpisodes"></span>
     </div>
-    <img class="png" src="" alt="Episode image" />
-    <p class="summary"></p>
-  </div>
 
-  <footer>
-    <p>
-      Data provided by
-      <a href="https://www.tvmaze.com/" target="_blank">TV Maze</a>
-    </p>
-  </footer>
+    <main>
+      <div id="root"></div>
+    </main>
+
+    <div class="container template">
+      <div class="title-box">
+        <h3 class="episodename"></h3>
+      </div>
+      <img class="png" src="" alt="Episode image" />
+      <p class="summary"></p>
+    </div>
+
+    <footer>
+      <p>
+        Data provided by
+        <a href="https://www.tvmaze.com/" target="_blank">TV Maze</a>
+      </p>
+    </footer>
 
     <!-- Loads a provided function called getAllEpisodes() which returns all episodes -->
-    <script src="episodes.js"></script>
+    <!-- <script src="episodes.js"></script> -->
 
     <!-- Loads YOUR javascript code -->
     <script src="script.js"></script>
