@@ -114,6 +114,16 @@ footer a {
   
 }
 
+#Show-selector {
+  min-width: 230px;
+  cursor: pointer;
+  padding: 10px;
+  font-size: 14px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+
+}
+
 #search-input {
   width: 260px;
 }
