@@ -9,31 +9,19 @@
   </head>
 
   <body>
-    <div class="controls">
-      <select id="Show-selector">
-        <option value="">Select Show</option>
-      </select>
+    <div id="searchMenu">
+      <select name="show" id="dropdownShow"></select>
 
-      <select id="episode-select">
-        <option value="">Select Episodes</option>
-      </select>
+      <select name="episode" id="dropdownEpisode"></select>
 
-      <input type="text" id="search-input" placeholder="search episodes..." />
+      <input type="search" id="searchBar" placeholder="Search Episodes..." />
 
       <span id="numberOfEpisodes"></span>
     </div>
 
-    <main>
-      <div id="root"></div>
-    </main>
+    <h1>TV Shows</h1>
 
-    <div class="container template">
-      <div class="title-box">
-        <h3 class="episodename"></h3>
-      </div>
-      <img class="png" src="" alt="Episode image" />
-      <p class="summary"></p>
-    </div>
+    <div id="container"></div>
 
     <footer>
       <p>
