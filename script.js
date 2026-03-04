@@ -9,6 +9,7 @@ let dropdownMenuShow = document.getElementById("dropdownShow");
 
 let allEpisodes = [];
 let allShows = [];
+let currentView = "shows";
 
 function pad(number) {
   return number.toString().padStart(2, "0");
@@ -29,10 +30,26 @@ async function fetchShows() {
 
   setupDropdownForShow();
 }
+function searchShows() {
+  searchBox.addEventListener("input", () => {
+    const searchValue = searchBox.value.toLowerCase();
+
+    const filteredShows = allShows.filter(
+      (show) =>
+        show.name.toLowerCase().includes(searchValue) ||
+        show.genres.join(" ").toLowerCase().includes(searchValue) ||
+        show.summary.toLowerCase().includes(searchValue),
+    );
+
+    displayShow(filteredShows);
+  });
+}
 
 //fetch episodes
 
 async function fetchEpisodes(showId) {
+  currentView = "episodes";
+  searchBox.value = "";
   episodesAndShowsContainer.innerHTML = "<p>Loading episodes...</p>";
 
   if (localStorage.getItem(showId)) {
@@ -72,6 +89,8 @@ async function fetchEpisodes(showId) {
 }
 
 function backButton() {
+  currentView = "shows";
+  searchBox.value = "";
   let backToShow = document.createElement("button");
   backToShow.classList.add("backtoshow");
   backToShow.textContent = "Back to shows";
@@ -88,7 +107,8 @@ function backButton() {
 //load selection
 
 window.onload = async function () {
-  fetchShows();
+  await fetchShows();
+  searchShows();
 };
 
 // ================= DISPLAY =================
